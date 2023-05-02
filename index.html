@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: black;
+    }
+    #canvasContainer {
+      border: 5px solid white;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 90vh;
+      width: 90vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="canvasContainer">
+    <script>
+      let rectSize = 5;
+      let rectSpacing = 5;
+
+      function setup() {
+        let canvasSize = min(windowWidth, windowHeight) * 0.9;
+        let canvas = createCanvas(canvasSize, canvasSize);
+        canvas.parent('canvasContainer');
+        background(0);
+        colorMode(HSB, 360, 100, 100);
+        noStroke();
+      }
+
+      function draw() {
+        background(0, 25);
+        let gridSize = rectSize + rectSpacing;
+
+        let movingX = width / 2 + cos(frameCount * 0.01) * width / 4;
+        let movingY = height / 2 + sin(frameCount * 0.01) * height / 4;
+
+        for (let x = 0; x < width; x += gridSize) {
+          for (let y = 0; y < height; y += gridSize) {
+            let d = dist(x, y, movingX, movingY);
+            let offset = map(d, 0, width / 2, 0, TWO_PI);
+            let angle = frameCount * 0.05 + offset;
+            let sizeOffset = map(sin(angle), -1, 1, -rectSize / 2, rectSize / 2);
+            sizeOffset = abs(sizeOffset) * (1.5 + sin(frameCount * 0.01));
+
+            let randomValue = random(1);
+            if (randomValue < 0.7) {
+              // Mostly blue color
+              hue = 210 + sin(frameCount * 0.01) * 50;
+              saturation = 80;
+              brightness = 90;
+            } else {
+              // Random color pop-up
+              hue = random(360);
+              saturation = 80;
+              brightness = 90;
+            }
+            fill(hue, saturation, brightness);
+
+            rectMode(CENTER);
+            push();
+            translate(x + gridSize / 2, y + gridSize / 2);
+            rotate(angle);
+            let pulsateFactor = sin(frameCount * 0.05) * 0.2 + 1;
+            let size = (rectSize + sizeOffset) * pulsateFactor;
+            rect(0, 0, size, size);
+            pop();
+          }
+        }
+      }
+    </script>
+  </div>
+</body>
+</html>
